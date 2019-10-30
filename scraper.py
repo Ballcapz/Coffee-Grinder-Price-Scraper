@@ -1,6 +1,11 @@
+import os
 import requests
 from bs4 import BeautifulSoup
 import smtplib
+from dotenv import load_dotenv
+load_dotenv()
+
+EMAIL_PWD = os.getenv("EMAIL_APP_CREDS")
 
 URL = 'https://www.seattlecoffeegear.com/baratza-sette-30-grinder'
 
@@ -17,7 +22,7 @@ def check_price():
     price = soup.find(id="product-price-12655").find("span").get_text()
     converted_price = float(price[1:5])
 
-    if (converted_price <= 226.0):
+    if (converted_price > 226.0):
         send_mail()
     else:
         print(converted_price)
@@ -28,7 +33,7 @@ def send_mail():
     server.starttls()
     server.ehlo()
 
-    server.login(email_sender, 'pborkseiidokifdq')
+    server.login(email_sender, EMAIL_PWD)
 
     subject = 'Baratza Grinder Price Down'
     body = 'Check the link ' + URL
