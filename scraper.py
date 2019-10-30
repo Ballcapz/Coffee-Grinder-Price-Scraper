@@ -22,7 +22,7 @@ def check_price():
     price = soup.find(id="product-price-12655").find("span").get_text()
     converted_price = float(price[1:5])
 
-    if (converted_price > 226.0):
+    if (converted_price <= 226.0):
         send_mail()
     else:
         print(converted_price)
