@@ -39,7 +39,7 @@ def check_amzn_coffee_price():
     amzn_price = real_amzn_soup.find(id="priceblock_ourprice").get_text()
     amzn_converted_price = float(amzn_price[1:5])
 
-    if (amzn_converted_price > 226.0):
+    if (amzn_converted_price <= 226.0):
         amzn_subject = 'Baratza Grinder Price Drop!'
         amzn_body = f'Check it out here {AMZN_URL}'
         send_mail(amzn_subject, amzn_body)
