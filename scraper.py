@@ -6,6 +6,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 EMAIL_PWD = os.getenv("EMAIL_APP_CREDS")
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
+
 
 SCG_URL = 'https://www.seattlecoffeegear.com/baratza-sette-30-grinder'
 AMZN_URL = 'https://www.amazon.com/Baratza-Sette-30-Conical-Grinder/dp/B075G11F9N/ref=sr_1_2?crid=2Z502RIPRQ7E9&keywords=baratza+sette+30&qid=1572464591&sprefix=baratza+se%2Caps%2C188&sr=8-2'
@@ -27,8 +30,10 @@ def check_scg_coffee_price():
         bara_subject = 'Baratza Grinder Price Drop!'
         bara_body = f'Check it out here {SCG_URL}'
         send_mail(bara_subject, bara_body)
+        telegram_send_message("@coffeePriceCheck" + bara_subject + "\n" + bara_body)
     else:
         print(f'SCG Price is currently {converted_price}')
+        telegram_send_message("@coffeePriceCheck SCG Price is currently $" + str(converted_price))
 
 def check_amzn_coffee_price():
     page = requests.get(AMZN_URL, headers=headers)
@@ -43,8 +48,10 @@ def check_amzn_coffee_price():
         amzn_subject = 'Baratza Grinder Price Drop!'
         amzn_body = f'Check it out here {AMZN_URL}'
         send_mail(amzn_subject, amzn_body)
+        telegram_send_message("@coffeePriceCheck" + amzn_subject + "\n" + amzn_body)
     else:
         print(f'Amazon price is currently {amzn_converted_price}')
+        telegram_send_message("@coffeePriceCheck Amazon Price is currently $" + str(amzn_converted_price))
 
 def send_mail(subject, body):
     server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -63,6 +70,18 @@ def send_mail(subject, body):
         print("Error: unable to send email")
 
     server.quit()
+
+
+
+def telegram_send_message(message):
+
+    bot_token = TELEGRAM_TOKEN
+    bot_chatID = CHAT_ID
+    send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + message
+
+    response = requests.get(send_text)
+
+    return response.json()
 
 
 check_scg_coffee_price()
